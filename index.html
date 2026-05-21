@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BitHide | Professional Data Concealment</title>
+    <meta name="description"
+        content="Secure, web-based tool to conceal confidential messages inside digital files using AES encryption and LSB steganography.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/src/css/auth.css">
+</head>
+
+<body>
+    <!-- AUTH MODAL SYSTEM -->
+    <div id="auth-modal" class="auth-modal-overlay">
+        <div class="auth-card">
+            <div class="auth-card-header" style="position: relative;">
+                <button id="auth-close-btn"
+                    style="position:absolute; right:0; top:0; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:24px;">
+                    <i class="ph ph-x"></i>
+                </button>
+                <i class="ph-fill ph-fingerprint auth-logo"></i>
+                <h2 id="auth-title">Sign In to BitHide</h2>
+                <p id="auth-subtitle">Secure access to the stego platform</p>
+            </div>
+
+            <div id="auth-error">Error message here</div>
+
+            <form id="auth-form">
+                <div class="auth-form-group">
+                    <label>Email Address</label>
+                    <div class="auth-input-wrapper">
+                        <i class="ph-fill ph-envelope-simple"></i>
+                        <input type="email" id="auth-email" placeholder="agent@bithide.io" required>
+                    </div>
+                </div>
+
+                <div class="auth-form-group">
+                    <label>Master Password</label>
+                    <div class="auth-input-wrapper">
+                        <i class="ph-fill ph-lock-key"></i>
+                        <input type="password" id="auth-password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="auth-submit-btn">Authenticate Session</button>
+            </form>
+
+            <div class="auth-toggle">
+                <span id="auth-toggle-text">Need an API key?</span>
+                <a id="auth-toggle-link">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-layout">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="ph-fill ph-fingerprint logo-icon"></i>
+                <span class="logo-text">BitHide</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Core Tools</div>
+                <button class="nav-item active" data-target="encode">
+                    <i class="ph-fill ph-lock-key"></i>
+                    <span>Encode Target</span>
+                </button>
+                <button class="nav-item" data-target="decode">
+                    <i class="ph-fill ph-lock-open"></i>
+                    <span>Decide Payload</span>
+                </button>
+
+                <div class="nav-divider"></div>
+                <div class="nav-label">Management</div>
+
+                <button class="nav-item" data-target="developer">
+                    <i class="ph-fill ph-terminal-window"></i>
+                    <span>Developer API</span>
+                </button>
+                <button class="nav-item" data-target="vault">
+                    <i class="ph-fill ph-clock-counter-clockwise"></i>
+                    <span>Data Vault</span>
+                </button>
+                <button class="nav-item" data-target="guide">
+                    <i class="ph-fill ph-book-open-text"></i>
+                    <span>Documentation</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                        <span>System Secured</span>
+                        <small>AES-256 Engine Active</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Topbar (Mobile Hamburger & Actions) -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobile-menu-btn">
+                        <i class="ph ph-list"></i>
+                    </button>
+                    <div class="breadcrumbs">
+                        <span>Workspace</span>
+                        <i class="ph ph-caret-right"></i>
+                        <span id="dynamic-page-title" class="text-gradient font-semibold">Encode Target</span>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="auth-user-badge" id="btn-logout" title="Sign Out">
+                        <span id="user-display">Not logged in</span>
+                        <i class="ph-fill ph-sign-out"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Scrollable Page Views -->
+            <div class="content-scroll-area">
+                <div class="page-container">
+
+                    <!-- ENCODE SECTION -->
+                    <section id="encode" class="app-section active">
+                        <div class="section-top-header">
+                            <div>
+                                <h1 class="page-title">Encode <span class="text-gradient">Secret</span></h1>
+                                <p class="page-desc">Embed your encrypted data using advanced LSB steganography.</p>
+                            </div>
+                            <div class="header-badges">
+                                <span class="badge blue">ENCODING</span>
+                                <span class="badge green">SECURE</span>
+                            </div>
+                        </div>
+
+                        <div class="desktop-grid">
+                            <!-- Left Column: Carrier -->
+                            <div class="grid-col">
+                                <div class="step-container">
+                                    <div class="step-header">
+                                        <div class="step-number">1</div>
+                                        <h2>Carrier File</h2>
+                                        <div class="info-tooltip" title="File to hide data inside"><i
+                                                class="ph ph-info"></i></div>
+                                    </div>
+                                    <div class="upload-card" id="encode-dropzone">
+                                        <input type="file" id="encode-file-input" hidden
+                                            accept=".png,.jpg,.jpeg,.mp3,.pdf">
+                                        <div class="upload-icon">
+                                            <i class="ph-fill ph-cloud-arrow-up"></i>
+                                        </div>
+                                        <h3 class="drop-title">Drag & Drop or Browse</h3>
+                                        <p class="drop-subtitle">Supports JPG, PNG, MP3, or PDF (Max 50MB)</p>
+                                        <button class="btn-sm btn-primary">Select File</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Secrets & Processing -->
+                            <div class="grid-col">
+                                <div class="step-container">
+                                    <div class="step-header">
+                                        <div class="step-number">2</div>
+                                        <h2>Secret Payload</h2>
+                                    </div>
+                                    <div class="input-card">
+                                        <textarea id="secret-message"
+                                            placeholder="Enter the top secret content you want to conceal..."
+                                            maxlength="2000"></textarea>
+                                        <div class="char-limit" id="char-count">0 / 2000 chars</div>
+                                    </div>
+                                </div>
+
+                                <div class="step-container">
+                                    <div class="step-header">
+                                        <div class="step-number">3</div>
+                                        <h2>AES Passphrase</h2>
+                                    </div>
+                                    <div class="input-card key-input-wrapper">
+                                        <i class="ph-fill ph-password"></i>
+                                        <input type="password" id="encode-key"
+                                            placeholder="Enter strictly private passphrase">
+                                    </div>
+                                    <p class="info-text"><i class="ph-fill ph-shield-check text-green"></i> Encrypted
+                                        locally. Keys never leave this device.</p>
+                                </div>
+
+                                <button class="btn-primary btn-large btn-glow">
+                                    <i class="ph-fill ph-lock-key"></i>
+                                    Inject & Pack Stego File
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="output-placeholder full-width">
+                            <i class="ph ph-check-circle"></i>
+                            <p>Encoded carrier artifact will appear here after processing.</p>
+                        </div>
+                    </section>
+
+                    <!-- DECODE SECTION -->
+                    <section id="decode" class="app-section">
+                        <div class="section-top-header">
+                            <div>
+                                <h1 class="page-title">Decode <span class="text-gradient">Payload</span></h1>
+                                <p class="page-desc">Extract deeply hidden encrypted messages securely from your stego
+                                    file.</p>
+                            </div>
+                            <div class="header-badges">
+                                <span class="badge blue">DECODING</span>
+                                <span class="badge green">SECURE</span>
+                            </div>
+                        </div>
+
+                        <div class="desktop-grid">
+                            <div class="grid-col">
+                                <div class="step-container">
+                                    <div class="step-header">
+                                        <div class="step-number">1</div>
+                                        <h2>Stego File Upload</h2>
+                                    </div>
+                                    <div class="upload-card" id="decode-dropzone">
+                                        <input type="file" id="decode-file-input" hidden
+                                            accept=".png,.jpg,.jpeg,.mp3,.pdf">
+                                        <div class="upload-icon">
+                                            <i class="ph-fill ph-file-dashed"></i>
+                                        </div>
+                                        <h3 class="drop-title">Select Stego Artifact</h3>
+                                        <p class="drop-subtitle">Upload the carrier file containing hidden fragments</p>
+                                        <button class="btn-sm btn-primary">Browse System</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid-col" style="justify-content:center;">
+                                <div class="step-container">
+                                    <div class="step-header">
+                                        <div class="step-number">2</div>
+                                        <h2>Decryption Passphrase</h2>
+                                    </div>
+                                    <div class="input-card key-input-wrapper">
+                                        <i class="ph-fill ph-key"></i>
+                                        <input type="password" id="decode-key"
+                                            placeholder="Enter originalAES Passphrase">
+                                    </div>
+                                    <p class="info-text"><i class="ph-fill ph-info"></i> Required to decipher the
+                                        recovered binary stream.</p>
+                                </div>
+
+                                <button class="btn-primary btn-large btn-glow" style="margin-top: 32px;">
+                                    <i class="ph-fill ph-lock-open"></i>
+                                    Extract & Decrypt Stream
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="output-placeholder full-width">
+                            <i class="ph ph-terminal-window"></i>
+                            <p>Decoded payload output stream will be logged here.</p>
+                        </div>
+                    </section>
+
+                    <!-- VAULT SECTION -->
+                    <section id="vault" class="app-section">
+                        <h1 class="page-title">Data <span class="text-gradient">Vault</span></h1>
+                        <p class="page-desc">Audit logs of your cryptographic operations stored securely on local
+                            storage.</p>
+
+                        <div class="vault-container">
+                            <div class="vault-metrics">
+                                <div class="metric-card">
+                                    <div class="metric-title">Files Encoded</div>
+                                    <div class="metric-value">0</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-title">Messages Decoded</div>
+                                    <div class="metric-value">0</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-title">Storage Used</div>
+                                    <div class="metric-value">0 MB</div>
+                                </div>
+                            </div>
+
+                            <div class="output-placeholder" style="margin-top: 32px; padding: 60px 20px;">
+                                <i class="ph ph-database" style="font-size: 40px; color: var(--text-muted);"></i>
+                                <h3 style="margin-top: 16px; color: var(--text-main);">No Logged Activity</h3>
+                                <p style="margin-top: 4px;">Initialize an encoding or decoding task to populate your
+                                    vault.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DEVELOPER API SECTION -->
+                    <section id="developer" class="app-section">
+                        <h1 class="page-title">Developer <span class="text-gradient">API Dashboard</span></h1>
+                        <p class="page-desc">Manage API Authentication and check your SaaS request quota.</p>
+
+                        <div class="desktop-grid" style="grid-template-columns: 1fr;">
+                            <div class="grid-col">
+                                <div class="api-key-container">
+                                    <div class="step-header">
+                                        <h2><i class="ph-fill ph-key"></i> Primary API Key</h2>
+                                    </div>
+                                    <p class="info-text">You must pass this key as the `<strong>X-API-Key</strong>`
+                                        header in all requests.</p>
+
+                                    <div class="api-key-display" id="api-key-display-box">
+                                        <span id="api-key-text">Loading secure session...</span>
+                                        <div class="api-actions">
+                                            <button class="icon-btn" id="btn-copy-key" title="Copy to clipboard"
+                                                style="display:none;">
+                                                <i class="ph ph-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 24px;">
+                                        <button class="btn-sm btn-primary" id="btn-generate-key">
+                                            <i class="ph ph-arrows-clockwise"></i> Generate New Key
+                                        </button>
+                                        <p class="info-text" style="color:#ef4444; margin-top: 8px;">
+                                            <i class="ph ph-warning-circle"></i> Warning: Generating a new key instantly
+                                            invalidates your previous key.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- GUIDE SECTION -->
+                    <section id="guide" class="app-section">
+                        <h1 class="page-title">Architecture <span class="text-gradient">Documentation</span></h1>
+                        <p class="page-desc">Understanding the mechanics of BitHide.</p>
+
+                        <div class="desktop-grid" style="grid-template-columns: 1fr;">
+                            <div class="grid-col">
+                                <div class="input-card doc-card">
+                                    <div class="doc-icon"><i class="ph-fill ph-cpu"></i></div>
+                                    <div class="doc-content">
+                                        <h3>1. The Encoding Engine</h3>
+                                        <p>When you provide a carrier file (JPG, PNG) and a secret payload, BitHide
+                                            first encrypts the text using <strong>AES-256 Symmetric Encryption</strong>.
+                                            The encrypted binary cipher is then deeply embedded into the carrier using
+                                            <strong>LSB (Least Significant Bit) manipulation</strong>. To the human eye
+                                            and standard file metadata analyzers, the stego artifact appears completely
+                                            unaltered.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-col">
+                                <div class="input-card doc-card">
+                                    <div class="doc-icon"><i class="ph-fill ph-scan"></i></div>
+                                    <div class="doc-content">
+                                        <h3>2. The Extraction Process</h3>
+                                        <p>By providing the correct stego file, our engine targets the LSB spectrum and
+                                            fragments the manipulated bits back into a continuous data stream. It then
+                                            validates the cryptographic signature using the AES passphrase provided.
+                                            Once authenticated, the data is decrypted and presented natively in your
+                                            browser.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script -->
+    <script type="module" src="/src/js/script.js"></script>
+</body>
+
+</html>

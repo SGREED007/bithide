@@ -1,0 +1,37 @@
+services:
+  # 1. The Python Backend API
+  - type: web
+    name: bithide-api
+    env: python
+    region: ohio
+    plan: free
+    branch: main
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:'create_app("production")' --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --log-level info
+    autoDeploy: true
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SUPABASE_URL
+        value: "https://iobfxpwtcgyiypolcwys.supabase.co"
+      - key: SUPABASE_SERVICE_KEY
+        sync: false # User must add securely in dashboard
+      - key: CORS_ORIGINS
+        sync: false # Set this to your frontend URL after deployment
+
+  # 2. The Vite Frontend
+  - type: web
+    name: bithide-frontend
+    env: static
+    branch: main
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    autoDeploy: true
+    # For SPA routing:
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
